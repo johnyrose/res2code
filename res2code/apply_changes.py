@@ -3,12 +3,8 @@ from .models import FileChanges, Change, ActionType
 
 def apply_replace(file_content, start_line, end_line, old_code, new_code):
     lines = file_content.splitlines()
-    old_lines = old_code.strip().splitlines()
     new_lines = new_code.strip().splitlines()
-    if lines[start_line - 1:end_line] == old_lines:
-        lines[start_line - 1:end_line] = new_lines
-    else:
-        print(f"Warning: Old code does not match at lines {start_line} to {end_line}. Skipping replace.")
+    lines[start_line - 1:end_line] = new_lines
     return "\n".join(lines) + "\n"
 
 def apply_insert(file_content, start_line, new_code):
@@ -19,15 +15,12 @@ def apply_insert(file_content, start_line, new_code):
 
 def apply_delete(file_content, start_line, end_line, old_code):
     lines = file_content.splitlines()
-    old_lines = old_code.strip().splitlines()
-    if lines[start_line - 1:end_line] == old_lines:
-        del lines[start_line - 1:end_line]
-    else:
-        print(f"Warning: Old code does not match at lines {start_line} to {end_line}. Skipping delete.")
+    del lines[start_line - 1:end_line]
     return "\n".join(lines) + "\n"
 
 def create_new_file(file_path, new_code):
     """Create a new file with the provided code."""
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'w') as file:
         file.write(new_code)
 
