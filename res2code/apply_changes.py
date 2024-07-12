@@ -1,7 +1,20 @@
 import os
 from .models import FileChanges, Change, ActionType
 
+
+def smart_lookup(file_content, old_code, new_code, start_line, end_line):
+    # Returns the correct start_line and end_line for the change
+    changed_lines = end_line - start_line + 1
+    first_line_old_code = old_code.splitlines()[0]
+    file_lines = file_content.splitlines()
+    for i in range(len(file_lines)):
+        if file_lines[i] == first_line_old_code:
+            if "\n".join(file_lines[i:i+changed_lines]) == old_code:
+                return i+1, i+changed_lines
+    return start_line, end_line
+
 def apply_replace(file_content, start_line, end_line, old_code, new_code):
+    start_line, end_line = smart_lookup(file_content, old_code, new_code, start_line, end_line)
     lines = file_content.splitlines(True)
     new_lines = new_code.splitlines(True)
     lines[start_line - 1:end_line] = new_lines
@@ -9,7 +22,7 @@ def apply_replace(file_content, start_line, end_line, old_code, new_code):
 
 def apply_insert(file_content, start_line, new_code):
     lines = file_content.splitlines()
-    new_lines = new_code.strip().splitlines()
+    new_lines = new_code.splitlines()
     lines.insert(start_line - 1, "\n".join(new_lines))
     return "\n".join(lines) + "\n"
 

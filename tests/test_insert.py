@@ -22,8 +22,7 @@ def insert_changes_file(tmp_path, example_file):
                     "start_line": 3,
                     "end_line": 3,
                     "action": "insert",
-                    "new_code": '    print("This is a new line")
-'
+                    "new_code": '    print("This is a new line")'
                 }
             ]
         }
