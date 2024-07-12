@@ -20,7 +20,9 @@ def apply_delete(file_content, start_line, end_line, old_code):
 
 def create_new_file(file_path, new_code):
     """Create a new file with the provided code."""
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    dir_name = os.path.dirname(file_path)
+    if dir_name is not "" and not os.path.exists(dir_name):
+        os.makedirs(dir_name, exist_ok=True)
     with open(file_path, 'w') as file:
         file.write(new_code)
 

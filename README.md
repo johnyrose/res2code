@@ -2,22 +2,21 @@
 
 `res2code` is a CLI tool for applying code changes specified in a JSON file.
 
-## Installation
+You can install `res2code` using pip:
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/johnyrose/res2code.git
-   cd res2code
-   ```
+```
+pip install git+https://github.com/johnyrose/res2code.git
+```
 
-2. Install dependencies:
+This will install `res2code` as a CLI tool on your system.2. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
+After installation, you can use `res2code` as a CLI tool. Apply changes from a JSON file:
 
-## Usage
-
-Apply changes from a JSON file:
+```
+res2code apply changes.json
+```Apply changes from a JSON file:
 ```
 python main.py apply changes.json
 ```
