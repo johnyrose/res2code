@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional
 from enum import Enum
 
@@ -10,27 +10,30 @@ class ActionType(str, Enum):
     delete_file = 'delete_file'
 
 class Change(BaseModel):
-    start_line: Optional[int] = None
-    end_line: Optional[int] = None
+    start_line: Optional[int] = Field(None)
+    end_line: Optional[int] = Field(None)
     action: ActionType
-    old_code: Optional[str] = None
-    new_code: Optional[str] = None
+    old_code: Optional[str] = Field(None)
+    new_code: Optional[str] = Field(None)
 
-    @validator('start_line', 'end_line')
-    def check_lines(cls, v, values, **kwargs):
-        if values['action'] in [ActionType.replace, ActionType.delete] and v is None:
-            raise ValueError('start_line and end_line are required for replace and delete actions')
+    @field_validator('start_line', 'end_line', mode='before')
+    @classmethod
+    def check_lines(cls, v, info):
+        if info.data.get('action') in [ActionType.replace, ActionType.delete] and v is None:
+            raise ValueError(f'{info.field_name} is required for replace and delete actions')
         return v
 
-    @validator('old_code')
-    def check_old_code(cls, v, values, **kwargs):
-        if values['action'] in [ActionType.replace, ActionType.delete] and not v:
+    @field_validator('old_code', mode='before')
+    @classmethod
+    def check_old_code(cls, v, info):
+        if info.data.get('action') in [ActionType.replace, ActionType.delete] and not v:
             raise ValueError('old_code is required for replace and delete actions')
         return v
 
-    @validator('new_code')
-    def check_new_code(cls, v, values, **kwargs):
-        if values['action'] in [ActionType.replace, ActionType.insert, ActionType.new_file] and not v:
+    @field_validator('new_code', mode='before')
+    @classmethod
+    def check_new_code(cls, v, info):
+        if info.data.get('action') in [ActionType.replace, ActionType.insert, ActionType.new_file] and not v:
             raise ValueError('new_code is required for replace, insert, and new_file actions')
         return v
 
