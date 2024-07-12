@@ -2,10 +2,10 @@ import os
 from .models import FileChanges, Change, ActionType
 
 def apply_replace(file_content, start_line, end_line, old_code, new_code):
-    lines = file_content.splitlines()
-    new_lines = new_code.strip().splitlines()
+    lines = file_content.splitlines(True)
+    new_lines = new_code.splitlines(True)
     lines[start_line - 1:end_line] = new_lines
-    return "\n".join(lines) + "\n"
+    return "".join(lines)
 
 def apply_insert(file_content, start_line, new_code):
     lines = file_content.splitlines()
