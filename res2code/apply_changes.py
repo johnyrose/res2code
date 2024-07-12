@@ -16,7 +16,7 @@ def smart_lookup(file_content, old_code, new_code, start_line, end_line):
 def apply_replace(file_content, start_line, end_line, old_code, new_code):
     start_line, end_line = smart_lookup(file_content, old_code, new_code, start_line, end_line)
     lines = file_content.splitlines(True)
-    new_lines = new_code.splitlines(True)
+    new_lines = [f"{line}\n" for line in new_code.splitlines()]
     lines[start_line - 1:end_line] = new_lines
     return "".join(lines)
 
