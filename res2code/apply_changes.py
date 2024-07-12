@@ -31,27 +31,34 @@ def create_new_file(file_path, new_code):
     with open(file_path, 'w') as file:
         file.write(new_code)
 
+def delete_file(file_path):
+    """Delete a specified file."""
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    else:
+        print(f"Warning: File {file_path} does not exist. Skipping delete file action.")
+
 def apply_changes(file_changes: FileChanges):
     file_path = file_changes.file
-    if not os.path.exists(file_path):
-        if any(change.action == 'new_file' for change in file_changes.changes):
-            new_file_content = "\n".join(change.new_code for change in file_changes.changes if change.new_code)
-            create_new_file(file_path, new_file_content)
-            return
-        else:
-            print(f"Error: File {file_path} does not exist.")
-            return
-    
-    with open(file_path, 'r') as file:
-        file_content = file.read()
+    if not os.path.exists(file_path) and any(change.action != 'new_file' for change in file_changes.changes):
+        print(f"Error: File {file_path} does not exist.")
+        return
     
     for change in file_changes.changes:
-        if change.action == 'replace':
-            file_content = apply_replace(file_content, change.start_line, change.end_line, change.old_code, change.new_code)
-        elif change.action == 'insert':
-            file_content = apply_insert(file_content, change.start_line, change.new_code)
-        elif change.action == 'delete':
-            file_content = apply_delete(file_content, change.start_line, change.end_line, change.old_code)
-    
-    with open(file_path, 'w') as file:
-        file.write(file_content)
+        if change.action == 'new_file':
+            create_new_file(file_path, change.new_code)
+        elif change.action == 'delete_file':
+            delete_file(file_path)
+        else:
+            with open(file_path, 'r') as file:
+                file_content = file.read()
+            
+            if change.action == 'replace':
+                file_content = apply_replace(file_content, change.start_line, change.end_line, change.old_code, change.new_code)
+            elif change.action == 'insert':
+                file_content = apply_insert(file_content, change.start_line, change.new_code)
+            elif change.action == 'delete':
+                file_content = apply_delete(file_content, change.start_line, change.end_line, change.old_code)
+            
+            with open(file_path, 'w') as file:
+                file.write(file_content)
