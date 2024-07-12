@@ -26,11 +26,21 @@ def apply_delete(file_content, start_line, end_line, old_code):
         print(f"Warning: Old code does not match at lines {start_line} to {end_line}. Skipping delete.")
     return "\n".join(lines) + "\n"
 
+def create_new_file(file_path, new_code):
+    """Create a new file with the provided code."""
+    with open(file_path, 'w') as file:
+        file.write(new_code)
+
 def apply_changes(file_changes: FileChanges):
     file_path = file_changes.file
     if not os.path.exists(file_path):
-        print(f"Error: File {file_path} does not exist.")
-        return
+        if any(change.action == 'new_file' for change in file_changes.changes):
+            new_file_content = "\n".join(change.new_code for change in file_changes.changes if change.new_code)
+            create_new_file(file_path, new_file_content)
+            return
+        else:
+            print(f"Error: File {file_path} does not exist.")
+            return
     
     with open(file_path, 'r') as file:
         file_content = file.read()

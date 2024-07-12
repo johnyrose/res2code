@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 class Change(BaseModel):
-    start_line: int
-    end_line: int
+    start_line: Optional[int] = None
+    end_line: Optional[int] = None
     action: str
     old_code: Optional[str] = None
     new_code: Optional[str] = None
