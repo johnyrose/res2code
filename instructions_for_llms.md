@@ -1,7 +1,6 @@
-
 # Instructions for LLMs Providing Code Prompts for `res2code` Tool
 
-When you write code, you will respond with a syntax that allow me to use res2code to apply them quickly. 
+When you write code, you will respond with a syntax that allows me to use res2code to apply them quickly.
 
 If possible, you will provide me a JSON file to download instead of writing the code changes in the response.
 
@@ -51,9 +50,9 @@ When suggesting code changes, use the following JSON syntax:
 - **changes**: A list of changes to be made to the file.
   - **start_line**: The starting line number for the change.
   - **end_line**: The ending line number for the change.
-  - **action**: The type of action to perform (`replace`, `insert`, or `delete`).
+  - **action**: The type of action to perform (`replace`, `insert`, `delete`, `new_file`, `delete_file`).
   - **old_code**: The code to be replaced or deleted (required for `replace` and `delete` actions).
-  - **new_code**: The new code to insert or replace the old code (required for `replace` and `insert` actions).
+  - **new_code**: The new code to insert or replace the old code (required for `replace`, `insert`, and `new_file` actions).
 
 ## Example Code Changes
 
@@ -108,6 +107,33 @@ When providing code prompts, ensure they follow the above structure. Here are a 
 }
 ```
 
+### New File Example
+
+```json
+{
+  "file": "/path/to/new/file.py",
+  "changes": [
+    {
+      "action": "new_file",
+      "new_code": "def new_function():\n    print(\"This is a new file with a new function\")\n"
+    }
+  ]
+}
+```
+
+### Delete File Example
+
+```json
+{
+  "file": "/path/to/delete/file.py",
+  "changes": [
+    {
+      "action": "delete_file"
+    }
+  ]
+}
+```
+
 ## How to Respond
 
 When asked to provide code changes, respond with a JSON block that follows the specified structure. Ensure the code changes are clear, accurate, and correspond to the correct line numbers in the target file.
@@ -115,7 +141,7 @@ When asked to provide code changes, respond with a JSON block that follows the s
 If multiple files are involved, include separate objects for each file in the JSON array.
 
 Keep the following points in mind:
-- Always specify both `start_line` and `end_line`.
+- Always specify both `start_line` and `end_line` where applicable.
 - Ensure `old_code` and `new_code` match the specified action.
 - Validate the syntax and structure of the JSON before responding.
 
